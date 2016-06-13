@@ -29,6 +29,7 @@ use OCA\DAV\CardDAV\ContactsManager;
 use OCA\DAV\CardDAV\SyncJob;
 use OCA\DAV\CardDAV\SyncService;
 use OCA\DAV\Connector\Sabre\Principal;
+use OCA\DAV\Controller\PhotosController;
 use OCA\DAV\DAV\GroupPrincipalBackend;
 use OCA\DAV\HookManager;
 use OCA\DAV\Migration\Classification;
@@ -115,6 +116,15 @@ class Application extends App {
 				$c->query('CalDavBackend'),
 				$c->getServer()->getUserManager()
 			);
+		});
+
+		$container->registerService('PhotosController', function(IAppContainer $c) {
+			$request = $c->query('Request');
+			$userSession = $c->getServer()->getUserSession();
+			$logger = $c->getServer()->getLogger();
+
+			return new PhotosController($c->getAppName(), $request,
+				$userSession, $c->query('CardDavBackend'), $logger);
 		});
 	}
 

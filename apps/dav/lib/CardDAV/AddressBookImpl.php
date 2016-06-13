@@ -216,7 +216,17 @@ class AddressBookImpl implements IAddressBook {
 		];
 
 		foreach ($vCard->children as $property) {
-			$result[$property->name] = $property->getValue();
+			if ($property->name === 'PHOTO') {
+				$addressBookId = $this->getKey();
+
+				$url = \OC::$server->getURLGenerator()->linkToRouteAbsolute('dav.photos.get', [
+					'addressbookId' => $addressBookId,
+					'contactUri' => $uri,
+				]);
+				$result['PHOTO'] = 'VALUE=uri:' . $url;
+			} else {
+				$result[$property->name] = $property->getValue();
+			}
 		}
 		if ($this->addressBookInfo['principaluri'] === 'principals/system/system' &&
 			$this->addressBookInfo['uri'] === 'system') {
